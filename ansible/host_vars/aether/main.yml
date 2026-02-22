@@ -1,6 +1,5 @@
 ansible_become: true
 ansible_become_method: doas
 ansible_python_interpreter: /usr/bin/python3.12
-
 ansible_user: nara
 ansible_host: aether.pve1.local

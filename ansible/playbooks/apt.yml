@@ -1,6 +1,6 @@
-- hosts: "apt"
+- hosts: apt
   tasks:
-    - name: "Update apt"
+    - name: Update apt
       apt:
         update_cache: yes
         upgrade: "yes"

@@ -1,4 +1,4 @@
-- hosts: "docker"
+- hosts: docker
   become: true
   vars:
     deb_architecture:
@@ -13,20 +13,16 @@
           - ca-certificates
           - curl
         update_cache: true
-    
     - name: Add Docker GPG key
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-
     - name: Add Docker repository
       ansible.builtin.apt_repository:
         repo: >
-          deb [arch={{ [ansible_facts['architecture']] | map('extract', deb_architecture) | first }}]
-          https://download.docker.com/{{ ansible_facts['system'] | lower }}/{{ ansible_facts['distribution'] | lower }}
-          {{ ansible_facts['distribution_release'] }} stable
+          deb [arch={{ [ansible_facts['architecture']] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_facts['system'] | lower
+          }}/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
         state: present
-    
     - name: Install Docker
       ansible.builtin.apt:
         name:
@@ -34,24 +30,21 @@
           - docker-ce-cli
           - containerd.io
         update_cache: true
-    
     - name: Add user to docker group
       ansible.builtin.user:
         name: "{{ ansible_user }}"
         groups: docker
         append: true
       when: ansible_user != 'root'
-
     - name: Start Docker service
       ansible.builtin.systemd:
         name: docker
         state: started
         enabled: true
-
     - name: Create stacks directory
       ansible.builtin.file:
-        path: "/opt/stacks"
+        path: /opt/stacks
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: '0755'
+        mode: 0755

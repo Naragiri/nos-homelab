@@ -18,7 +18,6 @@
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (_: {
       systems = [ "x86_64-linux" ];
-
       perSystem =
         {
           lib,
@@ -36,14 +35,16 @@
                   { pkgs, ... }:
                   {
                     packages = with pkgs; [
-                      terraform
-                      packer
+                      ansible
 
                       # Styling and linting
                       deadnix
                       nixfmt
                       statix
                       treefmt
+
+                      yamlfmt
+                      yamllint
                     ];
 
                     git-hooks = {
@@ -64,6 +65,23 @@
                         statix = {
                           enable = true;
                           excludes = [ "generated.nix" ];
+                        };
+
+                        yamllint = {
+                          enable = true;
+                          settings.configuration = ''
+                            extends: default
+                            ignore: |
+                              .pre-commit-config.yaml
+                            rules:
+                              document-start: disable
+                              truthy: disable
+                              quoted-strings:
+                                quote-type: double
+                                required: only-when-needed
+                              line-length:
+                                max: 160
+                          '';
                         };
                       };
                     };

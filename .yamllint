@@ -1,0 +1,11 @@
+extends: default
+ignore: |
+  .pre-commit-config.yaml
+rules:
+  document-start: disable
+  truthy: disable
+  quoted-strings:
+    quote-type: double
+    required: only-when-needed
+  line-length:
+    max: 160
