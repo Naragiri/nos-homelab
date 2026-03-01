@@ -3,10 +3,9 @@ formatter:
   include_document_start: false
   retain_line_breaks: true
   max_line_length: 160
-
-  # Quoting behavior
   quote_style: double
   preserve_quotes: true
 
 exclude:
   - .pre-commit-config.yaml
+  - ansible/inventory/host_vars/**/vault.yml

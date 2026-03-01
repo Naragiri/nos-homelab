@@ -1,0 +1,2 @@
+traefik_stack_dir: "{{ docker_stacks_dir }}/traefik"
+traefik_data_dir: "{{ docker_stacks_dir }}/traefik/data"

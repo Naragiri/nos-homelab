@@ -1,0 +1,6 @@
+timezone: America/New_York
+ssh_public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJsELfNyCWE87VpIIi65yL8j6WZKTaYGRoZnVr+d39Dh homelab
+
+docker_stacks_dir: /opt/stacks
+
+traefik_image: traefik:v3.6.1

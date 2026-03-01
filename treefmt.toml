@@ -3,7 +3,6 @@ on-unmatched = "info"
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]
-excludes = ["packages/**/generated.nix", "overlays/**/generated.nix"]
 
 [formatter.yaml]
 command = "yamlfmt"

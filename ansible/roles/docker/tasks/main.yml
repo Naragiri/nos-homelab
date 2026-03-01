@@ -1,0 +1,55 @@
+- name: Install Docker
+  tags: [docker, docker:setup]
+  become: yes
+  block:
+    - name: Debian/Ubuntu Docker setup
+      when: ansible_facts['os_family']  == "Debian"
+      block:
+        - name: Install dependencies
+          ansible.builtin.apt:
+            name:
+              - ca-certificates
+              - curl
+            update_cache: true
+
+        - name: Add Docker GPG key
+          ansible.builtin.apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+
+        - name: Add Docker repository
+          ansible.builtin.apt_repository:
+            repo: >
+              deb [arch={{ [ansible_facts['architecture']] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_facts['system'] |
+              lower }}/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
+            state: present
+
+        - name: Install Docker
+          ansible.builtin.apt:
+            name:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-compose-plugin
+              - python3-docker
+            update_cache: true
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+    - name: Start Docker service
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create stacks directory
+      ansible.builtin.file:
+        path: "{{ docker_stacks_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0755

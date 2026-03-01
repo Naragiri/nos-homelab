@@ -1,0 +1,44 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  network:
+    network:
+      version: 2
+      ethernets:
+        any:
+          match:
+            name: en*
+          dhcp4: true
+  ssh:
+    install-server: true
+    allow-pw: true
+    disable_root: true
+    ssh_quiet_keygen: true
+    allow_public_ssh_keys: true
+  packages:
+    - qemu-guest-agent
+    - python3
+    - doas
+    - curl
+    - git
+  storage:
+    layout:
+      name: lvm
+  user-data:
+    package_upgrade: false
+    users:
+      - name: ${ssh_username}
+        groups: [adm, sudo]
+        lock-passwd: false
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        passwd: "${hashed_ssh_password}"
+        ssh_authorized_keys:
+          - ${ssh_public_key}
+  late-commands:
+    - echo 'permit nopass :sudo' > /target/etc/doas.conf
+    - "curtin in-target -- bash -c 'SUDO_FORCE_REMOVE=yes apt purge -y sudo'"
+    - "echo 'ssh_pwauth: false' > /target/etc/cloud/cloud.cfg.d/99-disable-pw-auth.cfg"

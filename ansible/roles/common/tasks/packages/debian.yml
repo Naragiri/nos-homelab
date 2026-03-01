@@ -1,0 +1,32 @@
+- name: Install common packages (Debian)
+  become: yes
+  block:
+    - name: Install common packages
+      ansible.builtin.apt:
+        name:
+          - curl
+          - wget
+          - git
+          - btop
+          - ufw
+        state: present
+
+    - name: Set UFW incoming policy
+      ansible.builtin.ufw:
+        policy: deny
+        direction: incoming
+
+    - name: Set UFW outgoing policy
+      ansible.builtin.ufw:
+        policy: allow
+        direction: outgoing
+
+    - name: Allow SSH through firewall
+      ansible.builtin.ufw:
+        rule: allow
+        port: 22
+        proto: tcp
+
+    - name: Enable UFW
+      ansible.builtin.ufw:
+        state: enabled

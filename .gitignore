@@ -1,3 +1,7 @@
 .devenv/
 .direnv/
 .pre-commit-config.yaml
+.env
+.vault_pass
+*.retry
+*.pkrvars.hcl

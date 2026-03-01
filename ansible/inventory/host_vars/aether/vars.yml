@@ -1,0 +1,6 @@
+traefik_dashboard_url: traefik-dashboard.local.aluber.dev
+traefik_base_url: local.aluber.dev
+
+traefik_cf_api_email: "{{ vault_traefik_cf_api_email }}"
+traefik_cf_dns_api_token: "{{ vault_traefik_cf_dns_api_token }}"
+traefik_auth_credentials: "{{ vault_traefik_auth_credentials }}"

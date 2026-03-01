@@ -1,0 +1,53 @@
+- name: Bootstrap python and doas
+  hosts: "{{ target }}"
+  gather_facts: no
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Detect OS family
+      ansible.builtin.raw: |
+        . /etc/os-release && echo $ID_LIKE || echo $ID
+      register: os_family_raw
+      changed_when: false
+
+    - name: Set os_family fact
+      ansible.builtin.set_fact:
+        detected_os_family: >-
+          {{ 'debian' if 'debian' in os_family_raw.stdout | lower else 'unknown' }} #magic___^_^___line
+    - name: Bootstrap Debian/Ubuntu
+      when: detected_os_family == 'debian'
+      block:
+        - name: Install Python and doas
+          ansible.builtin.raw: |
+            apt update && apt install -y python3 opendoas
+          changed_when: true
+
+        - name: Configure doas
+          ansible.builtin.raw: |
+            echo "permit persist :sudo" > /etc/doas.conf
+          changed_when: true
+
+        - name: Remove sudo
+          ansible.builtin.raw: |
+            SUDO_FORCE_REMOVE=yes apt purge -y sudo
+          changed_when: true
+
+- name: Verify bootstrap
+  hosts: "{{ target }}"
+  gather_facts: yes
+  become: yes
+  become_method: doas
+  tasks:
+    - name: Confirm Python is available
+      ansible.builtin.command: python3 --version
+      changed_when: false
+
+    - name: Confirm doas works
+      ansible.builtin.command: whoami
+      become: yes
+      changed_when: false
+      register: whoami_result
+
+    - name: Print whoami result
+      ansible.builtin.debug:
+        msg: "Become works — running as: {{ whoami_result.stdout }}"

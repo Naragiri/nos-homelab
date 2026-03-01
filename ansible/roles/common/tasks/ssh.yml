@@ -1,0 +1,34 @@
+- name: Setup/Deploy SSH
+  become: yes
+  block:
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: /home/{{ ansible_user }}/.ssh
+        state: directory
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      become: no
+
+    - name: Add authorised SSH public key
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        key: "{{ ssh_public_key }}"
+        state: present
+      become: no
+
+    - name: Deploy SSH hardening config
+      ansible.builtin.template:
+        src: 99-ssh-hardening.conf.j2
+        dest: /etc/ssh/sshd_config.d/99-ssh-hardening.conf
+        owner: root
+        group: root
+        mode: 0644
+        validate: /usr/sbin/sshd -t -f %s
+      notify: restart ssh
+
+    - name: Ensure ssh is enabled and running
+      ansible.builtin.systemd:
+        name: ssh
+        enabled: yes
+        state: started

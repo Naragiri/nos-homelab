@@ -36,6 +36,8 @@
                   {
                     packages = with pkgs; [
                       ansible
+                      packer
+                      just
 
                       # Styling and linting
                       deadnix
@@ -73,6 +75,7 @@
                             extends: default
                             ignore: |
                               .pre-commit-config.yaml
+                              ansible/inventory/host_vars/**/vault.yml
                             rules:
                               document-start: disable
                               truthy: disable
@@ -80,7 +83,7 @@
                                 quote-type: double
                                 required: only-when-needed
                               line-length:
-                                max: 160
+                                max: 180
                           '';
                         };
                       };
