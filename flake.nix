@@ -71,7 +71,10 @@
 
                         ansible-lint = {
                           enable = true;
-                          settings.configPath = toString ./ansible/.ansible-lint;
+                          settings = {
+                            configPath = toString ./ansible/.ansible-lint;
+                            subdir = toString ./ansible;
+                          };
                         };
                       };
                     };
