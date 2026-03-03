@@ -1,6 +1,7 @@
-- name: Traefik
-  tags: [traefik, traefik:setup]
-  become: yes
+---
+- name: Setup Traefik
+  tags: [traefik, "traefik:setup"]
+  become: true
   block:
     - name: Create traefik directories
       ansible.builtin.file:
@@ -8,7 +9,7 @@
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: 0755
+        mode: "0755"
       loop:
         - "{{ traefik_stack_dir }}"
         - "{{ traefik_data_dir }}"
@@ -16,13 +17,13 @@
     - name: Stat acme.json
       ansible.builtin.stat:
         path: "{{ traefik_data_dir }}/acme.json"
-      register: acme_json_stat
+      register: traefik_acme_json_stat
 
     - name: Remove acme.json if it's a directory
       ansible.builtin.file:
         path: "{{ traefik_data_dir }}/acme.json"
         state: absent
-      when: acme_json_stat.stat.exists and acme_json_stat.stat.isdir
+      when: traefik_acme_json_stat.stat.exists and traefik_acme_json_stat.stat.isdir
 
     - name: Create acme.json if it doesn't exist
       ansible.builtin.file:
@@ -30,7 +31,7 @@
         state: touch
         owner: root
         group: root
-        mode: 0600
+        mode: "0600"
         modification_time: preserve
         access_time: preserve
 
@@ -45,12 +46,12 @@
         dest: "{{ traefik_data_dir }}/traefik.yml"
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       notify: restart traefik
 
-- name: Traefik deploy
-  tags: [traefik, traefik:deploy]
-  become: yes
+- name: Deploy Traefik
+  tags: [traefik, "traefik:deploy"]
+  become: true
   block:
     - name: Deploy compose file
       ansible.builtin.template:
@@ -58,7 +59,7 @@
         dest: "{{ traefik_stack_dir }}/docker-compose.yml"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: 0644
+        mode: "0644"
 
     - name: Deploy traefik env file
       ansible.builtin.template:
@@ -66,7 +67,7 @@
         dest: "{{ traefik_stack_dir }}/.env"
         owner: root
         group: root
-        mode: 0600
+        mode: "0600"
       notify: restart traefik
 
     - name: Deploy traefik compose

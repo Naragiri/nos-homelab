@@ -46,7 +46,7 @@
                       treefmt
 
                       yamlfmt
-                      yamllint
+                      ansible-lint
                     ];
 
                     git-hooks = {
@@ -69,22 +69,9 @@
                           excludes = [ "generated.nix" ];
                         };
 
-                        yamllint = {
+                        ansible-lint = {
                           enable = true;
-                          settings.configuration = ''
-                            extends: default
-                            ignore: |
-                              .pre-commit-config.yaml
-                              ansible/inventory/host_vars/**/vault.yml
-                            rules:
-                              document-start: disable
-                              truthy: disable
-                              quoted-strings:
-                                quote-type: double
-                                required: only-when-needed
-                              line-length:
-                                max: 180
-                          '';
+                          settings.configPath = toString ./ansible/.ansible-lint;
                         };
                       };
                     };

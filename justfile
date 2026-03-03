@@ -3,6 +3,11 @@
 _default:
   @just --list --unsorted
 
+[group('fmt')]
+fmt:
+  treefmt
+  treefmt -C ansible
+
 # Bootstraps a host using an ip address.
 [group('ansible')]
 [working-directory: 'ansible']

@@ -1,11 +1,11 @@
 formatter:
   type: basic
-  include_document_start: false
+  include_document_start: true
   retain_line_breaks: true
   max_line_length: 160
-  quote_style: double
+  quote_style: none
   preserve_quotes: true
-
+  
 exclude:
   - .pre-commit-config.yaml
-  - ansible/inventory/host_vars/**/vault.yml
+  - "**/vault.yml"

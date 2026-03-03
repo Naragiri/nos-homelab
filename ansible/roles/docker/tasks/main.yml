@@ -1,6 +1,7 @@
+---
 - name: Install Docker
-  tags: [docker, docker:setup]
-  become: yes
+  tags: [docker, "docker:setup"]
+  become: true
   block:
     - name: Debian/Ubuntu Docker setup
       when: ansible_facts['os_family']  == "Debian"
@@ -52,4 +53,4 @@
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: 0755
+        mode: "0755"

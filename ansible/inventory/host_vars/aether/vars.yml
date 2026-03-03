@@ -1,6 +1,13 @@
-traefik_dashboard_url: traefik-dashboard.local.aluber.dev
-traefik_base_url: local.aluber.dev
+---
+global_base_url: local.aluber.dev
 
+authelia_url: authelia.local.aluber.dev
+authelia_user_password: "{{ vault_authelia_user_password }}"
+authelia_jwt_secret: "{{ vault_authelia_jwt_secret }}"
+authelia_session_secret: "{{ vault_authelia_session_secret }}"
+authelia_storage_encryption_key: "{{ vault_authelia_storage_encryption_key }}"
+
+traefik_dashboard_url: traefik-dashboard.local.aluber.dev
 traefik_cf_api_email: "{{ vault_traefik_cf_api_email }}"
 traefik_cf_dns_api_token: "{{ vault_traefik_cf_dns_api_token }}"
 traefik_auth_credentials: "{{ vault_traefik_auth_credentials }}"

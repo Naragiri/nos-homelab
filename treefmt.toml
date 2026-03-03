@@ -1,10 +1,5 @@
 on-unmatched = "info"
 
-[formatter.nix]
+[formatter.nixfmt]
 command = "nixfmt"
 includes = ["*.nix"]
-
-[formatter.yaml]
-command = "yamlfmt"
-includes = ["*.yml"]
-excludes = [".pre-commit-config.yml"]

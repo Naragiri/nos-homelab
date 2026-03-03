@@ -1,13 +1,12 @@
+---
 - name: Common tasks
-  tags: [common, common:setup]
-
+  tags: [common, "common:setup"]
   block:
     - name: Configure timezone
-      include_tasks: timezone.yml
-
+      ansible.builtin.include_tasks: timezone.yml
     - name: Setup packages (Debian/Ubuntu)
       ansible.builtin.include_tasks: packages/debian.yml
       when: ansible_facts['os_family'] == "Debian"
 
     - name: Configure SSH
-      include_tasks: ssh.yml
+      ansible.builtin.include_tasks: ssh.yml

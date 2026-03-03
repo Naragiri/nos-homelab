@@ -1,7 +1,7 @@
 ---
-- name: Restart traefik
+- name: Restart authelia
   community.docker.docker_compose_v2:
-    project_src: "{{ traefik_stack_dir }}"
+    project_src: "{{ authelia_stack_dir }}"
     state: present
     pull: always
   become: true

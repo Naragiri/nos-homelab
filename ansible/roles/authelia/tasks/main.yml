@@ -1,0 +1,62 @@
+---
+- name: Setup Authelia
+  tags: [authelia, "authelia:setup"]
+  become: true
+  block:
+    - name: Create authelia directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0755"
+      loop:
+        - "{{ authelia_stack_dir }}"
+        - "{{ authelia_config_dir }}"
+        - "{{ authelia_redis_data }}"
+
+- name: Deploy Authelia
+  tags: [authelia, "authelia:deploy"]
+  become: true
+  block:
+    - name: Deploy compose file
+      ansible.builtin.template:
+        src: docker-compose.yml.j2
+        dest: "{{ authelia_stack_dir }}/docker-compose.yml"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0644"
+      notify: restart authelia
+
+    - name: Deploy authelia env file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ authelia_stack_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      notify: restart authelia
+
+    - name: Deploy authelia configuration
+      ansible.builtin.template:
+        src: configuration.yml.j2
+        dest: "{{ authelia_config_dir }}/configuration.yml"
+        owner: root
+        group: root
+        mode: "0600"
+      notify: restart authelia
+
+    - name: Deploy authelia users_database
+      ansible.builtin.template:
+        src: users_database.yml.j2
+        dest: "{{ authelia_config_dir }}/users_database.yml"
+        owner: root
+        group: root
+        mode: "0600"
+      notify: restart authelia
+
+    - name: Deploy authelia compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ authelia_stack_dir }}"
+        state: present
+        pull: always

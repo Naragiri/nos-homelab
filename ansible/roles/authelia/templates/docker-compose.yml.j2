@@ -1,0 +1,42 @@
+services:
+  authelia:
+    image: {{ authelia_image }}
+    container_name: authelia
+    env_file: .env
+    volumes:
+      - {{ authelia_config_dir }}:/config
+    environment:
+      TZ: {{ timezone }}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authelia.rule=Host(`{{ authelia_url }}`)"
+      - "traefik.http.routers.authelia.entrypoints=https"
+      - "traefik.http.routers.authelia.tls=true"
+      - "traefik.http.routers.authelia.tls.certresolver=cloudflare"
+      - "traefik.http.services.authelia.loadbalancer.server.port=9091"
+      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/authz/forward-auth"
+      - "traefik.http.middlewares.authelia.forwardauth.trustforwardheader=true"
+      - "traefik.http.middlewares.authelia.forwardauth.authresponseheaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email"
+    networks:
+      - authelia
+      - traefik
+    depends_on:
+      - authelia-redis
+    restart: unless-stopped
+
+  authelia-redis:
+    image: {{ redis_image }}
+    container_name: redis
+    volumes:
+      - {{ authelia_redis_data }}:/data
+    environment:
+      TZ: {{ timezone }}
+    networks:
+      - authelia
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
+  authelia:
+    internal: true

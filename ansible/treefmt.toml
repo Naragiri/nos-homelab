@@ -1,0 +1,15 @@
+on-unmatched = "info"
+
+[formatter.yamlfmt]
+command = "yamlfmt"
+options = ["-conf", ".yamlfmt"]
+includes = ["*.yml"]
+excludes = [".pre-commit-config.yml", "**/vault.yml"]
+priority = 1
+
+[formatter.ansible-lint]
+command = "ansible-lint"
+options = ["--fix"]
+includes = ["*.yml"]
+excludes = [".pre-commit-config.yml", "**/vault.yml"]
+priority = 2
