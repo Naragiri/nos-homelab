@@ -44,6 +44,7 @@
                       nixfmt
                       statix
                       treefmt
+                      pre-commit
 
                       yamlfmt
                       ansible-lint
@@ -71,10 +72,9 @@
 
                         ansible-lint = {
                           enable = true;
-                          settings = {
-                            configPath = toString ./ansible/.ansible-lint;
-                            subdir = toString ./ansible;
-                          };
+                          entry = "bash -c 'cd ansible && ansible-lint -c .ansible-lint'";
+                          files = "^ansible/.*\\.ya?ml$";
+                          pass_filenames = false;
                         };
                       };
                     };
